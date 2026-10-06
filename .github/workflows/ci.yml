@@ -89,7 +89,7 @@ jobs:
             http://127.0.0.1:8080/ \
             > /tmp/index.html
 
-          grep -q "Nexvion" /tmp/index.html
+          grep -qi '<title>NEXVION' /tmp/index.html
 
       - name: Test static assets
         run: |
