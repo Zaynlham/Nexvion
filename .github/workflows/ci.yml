@@ -1,4 +1,3 @@
-mkdir -p .github/workflows && cat > .github/workflows/ci.yml <<'EOF'
 name: Nexvion CI
 
 on:
