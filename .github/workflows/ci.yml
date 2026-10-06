@@ -11,6 +11,7 @@ on:
 
 permissions:
   contents: read
+  packages: write
 
 jobs:
   validate-build-test:
@@ -132,6 +133,24 @@ jobs:
               -o /dev/null
           done
 
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Tag image for GHCR
+        run: |
+          docker tag \
+            nexvion:${{ github.sha }} \
+            ghcr.io/${{ github.repository_owner }}/nexvion:${{ github.sha }}
+
+      - name: Push image to GHCR
+        run: |
+          docker push \
+            ghcr.io/${{ github.repository_owner }}/nexvion:${{ github.sha }}
+
       - name: Show container logs on failure
         if: failure()
         run: |
@@ -145,4 +164,5 @@ jobs:
           docker image rm \
             nexvion:${{ github.sha }} \
             nexvion:ci \
+            ghcr.io/${{ github.repository_owner }}/nexvion:${{ github.sha }} \
             2>/dev/null || true
