@@ -141,15 +141,28 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Tag image for GHCR
+        shell: bash
         run: |
+          set -euo pipefail
+
+          IMAGE_NAME="ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/nexvion"
+
+          echo "Publishing image:"
+          echo "${IMAGE_NAME}:${GITHUB_SHA}"
+
           docker tag \
-            nexvion:${{ github.sha }} \
-            ghcr.io/${{ github.repository_owner }}/nexvion:${{ github.sha }}
+            "nexvion:${GITHUB_SHA}" \
+            "${IMAGE_NAME}:${GITHUB_SHA}"
 
       - name: Push image to GHCR
+        shell: bash
         run: |
+          set -euo pipefail
+
+          IMAGE_NAME="ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/nexvion"
+
           docker push \
-            ghcr.io/${{ github.repository_owner }}/nexvion:${{ github.sha }}
+            "${IMAGE_NAME}:${GITHUB_SHA}"
 
       - name: Show container logs on failure
         if: failure()
@@ -158,11 +171,14 @@ jobs:
 
       - name: Cleanup
         if: always()
+        shell: bash
         run: |
+          IMAGE_NAME="ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/nexvion"
+
           docker rm -f nexvion-ci 2>/dev/null || true
 
           docker image rm \
-            nexvion:${{ github.sha }} \
-            nexvion:ci \
-            ghcr.io/${{ github.repository_owner }}/nexvion:${{ github.sha }} \
+            "nexvion:${GITHUB_SHA}" \
+            "nexvion:ci" \
+            "${IMAGE_NAME}:${GITHUB_SHA}" \
             2>/dev/null || true
