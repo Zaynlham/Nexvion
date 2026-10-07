@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: nexvion-web
+  namespace: nexvion
+  labels:
+    app: nexvion-web
+
+spec:
+  replicas: 2
+
+  selector:
+    matchLabels:
+      app: nexvion-web
+
+  template:
+    metadata:
+      labels:
+        app: nexvion-web
+
+    spec:
+      containers:
+        - name: web-server
+          image: ghcr.io/zaynlham/nexvion:6fe1378eafd9601a8518cc690cf9acddf6389f9f
+          imagePullPolicy: IfNotPresent
+
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            initialDelaySeconds: 3
+            periodSeconds: 5
+            timeoutSeconds: 2
+            failureThreshold: 3
+
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 3
+
+          resources:
+            requests:
+              cpu: 50m
+              memory: 32Mi
+            limits:
+              cpu: 250m
+              memory: 128Mi
