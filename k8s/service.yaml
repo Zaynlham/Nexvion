@@ -6,7 +6,7 @@ metadata:
   namespace: nexvion
 
 spec:
-  type: ClusterIP
+  type: LoadBalancer
 
   selector:
     app: nexvion-web

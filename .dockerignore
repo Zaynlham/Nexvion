@@ -1,0 +1,16 @@
+.git
+.github
+**/.terraform/
+**/*.tfstate
+**/*.tfstate.*
+**/*.tfvars
+**/*.tfvars.json
+.env
+.env.*
+.aws/
+*.csv
+*.pem
+*.key
+*.crt
+*.p12
+node_modules/
